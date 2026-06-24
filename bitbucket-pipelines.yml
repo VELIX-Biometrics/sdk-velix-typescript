@@ -1,0 +1,13 @@
+image: node:20-alpine
+
+pipelines:
+  branches:
+    main:
+      - step:
+          name: Build & Test
+          caches:
+            - node
+          script:
+            - npm install
+            - npm run build
+            - npm test
