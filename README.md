@@ -254,3 +254,16 @@ npm login
 | Serviço | Tipo | Descrição |
 |---|---|---|
 | `api-velix-identity-core` | HTTP (API pública) | BFF único da plataforma VELIX. Todos os módulos do SDK consomem exclusivamente esta API na rota `/v1/*`. Autenticação via `Authorization: Bearer <apiKey>`. |
+
+---
+
+## Qualidade de código
+
+### Lint e pre-push
+
+Este repositório usa **Husky** para garantir qualidade antes de qualquer push:
+
+```bash
+# Roda automaticamente no pre-push via Husky
+npm run lint
+```
