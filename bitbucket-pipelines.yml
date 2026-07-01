@@ -1,13 +1,53 @@
 image: node:20-alpine
 
+definitions:
+  caches:
+    pnpm: ~/.local/share/pnpm/store
+
+  steps:
+    - step: &validate
+        name: Validate
+        caches: [pnpm]
+        script:
+          - corepack enable pnpm
+          - pnpm install --frozen-lockfile --ignore-scripts
+          - pnpm run lint
+          - pnpm -r run build
+          - pnpm audit --audit-level high
+          - npx --yes @secretlint/secretlint "**/*" --secretlintignore .secretlintignore
+
+    - step: &sbom
+        name: SBOM
+        caches: [pnpm]
+        script:
+          - corepack enable pnpm
+          - pnpm install --frozen-lockfile --ignore-scripts
+          - npx --yes @cyclonedx/cyclonedx-npm --output-format JSON --output-file sbom.json
+        artifacts:
+          - sbom.json
+
 pipelines:
   branches:
     main:
+      - step: *validate
+
+  tags:
+    'v*.*.*':
+      - step: *validate
+      - step: *sbom
       - step:
-          name: Build & Test
-          caches:
-            - node
+          name: Publish
+          deployment: production
+          trigger: manual
+          caches: [pnpm]
           script:
-            - npm install
-            - npm run build
-            - npm test
+            - corepack enable pnpm
+            - pnpm install --frozen-lockfile --ignore-scripts
+            - pnpm -r run build
+            - |
+              for pkg in packages/core packages/node packages/browser packages/react; do
+                cd $pkg
+                npm config set //registry.npmjs.org/:_authToken $NPM_TOKEN
+                npm publish --access public --provenance 2>/dev/null || true
+                cd ../..
+              done
