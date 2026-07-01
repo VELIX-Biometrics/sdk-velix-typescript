@@ -1,0 +1,20 @@
+{
+  "name": "@velix/sdk-core",
+  "version": "0.1.0",
+  "description": "Velix SDK — tipos, erros, cliente HTTP (zero dependências externas)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "postinstall": ""
+  },
+  "dependencies": {},
+  "peerDependencies": {},
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  }
+}

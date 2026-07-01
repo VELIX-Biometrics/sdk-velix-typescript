@@ -1,0 +1,5 @@
+export { VelixClient } from './client'
+export { VelixError, VelixApiError, VelixNetworkError } from './errors'
+export { CheckinModule } from './modules/checkin'
+export { PersonsModule } from './modules/persons'
+export type { VelixConfig, Envelope, ApiResponse, CheckinResult, Person, PaginatedResult } from './types'

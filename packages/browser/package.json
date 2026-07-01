@@ -1,0 +1,21 @@
+{
+  "name": "@velix/sdk-browser",
+  "version": "0.1.0",
+  "description": "Velix SDK — extensões browser (sem Node built-ins)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "postinstall": ""
+  },
+  "dependencies": {
+    "@velix/sdk-core": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@velix/sdk-react",
+  "version": "0.1.0",
+  "description": "Velix SDK — React hooks (useCheckin, useGuest, useEventStatus)",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": ["dist"],
+  "license": "UNLICENSED",
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest run",
+    "postinstall": ""
+  },
+  "dependencies": {
+    "@velix/sdk-browser": "workspace:*"
+  },
+  "peerDependencies": {
+    "react": "^18.0.0 || ^19.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^19.0.0",
+    "react": "^19.0.0",
+    "typescript": "^5.4.0",
+    "vitest": "^2.0.0"
+  }
+}
