@@ -20,15 +20,16 @@ yarn add @velix/sdk
 ## Quick Start
 
 ```typescript
-import { VelixClient, CheckinModule, PersonsModule } from '@velix/sdk'
+import { VelixClient, CheckinModule } from '@velix/sdk'
 
 const client = new VelixClient({
   apiUrl: process.env.VELIX_API_URL!,
   apiKey: process.env.VELIX_API_KEY!,
+  environment: 'sandbox',
 })
 
-const result = await new CheckinModule(client).facial('tenant-slug', frameBase64)
-console.log(result.passed) // true | false
+const result = await new CheckinModule(client).identify({ imageBase64: frameBase64 })
+console.log(result.matched) // true | false
 ```
 
 ## Environment Variables
@@ -37,16 +38,18 @@ console.log(result.passed) // true | false
 |----------|----------|-------------|
 | `VELIX_API_URL` | Yes | API base URL (`https://api.velixbiometrics.com`) |
 | `VELIX_API_KEY` | Yes | Tenant API key (`vx_live_...` or `vx_sandbox_...`) |
-| `VELIX_TIMEOUT` | No | Request timeout in ms (default: `10000`) |
+| `VELIX_TIMEOUT` | No | Request timeout in ms (default: `30000`) |
 
 ## Modules
 
-| Module | Methods |
-|--------|---------|
-| `CheckinModule` | `facial()`, `qr()`, `pin()`, `getHistory()` |
-| `PersonsModule` | `list()`, `get()`, `create()`, `update()`, `delete()`, `enroll()` |
-| `EventsModule` | `list()`, `get()`, `create()`, `configure()` |
-| `TenantsModule` | `me()`, `updateSettings()` |
+| Module | Methods | Endpoint |
+|--------|---------|----------|
+| `OnboardingModule` | `enroll()` | `POST /v1/api/onboarding` |
+| `CheckinModule` | `identify()` | `POST /v1/api/checkin/identify` |
+| `LgpdModule` | `requestDeletion()` | `POST /v1/api/deletion-request` |
+| `MeModule` | `get()` | `GET /v1/api/me/:personId` |
+| `EventsModule` | `createGuest()`, `getGuest()` | `POST`/`GET /v1/api/events/:id/guests` |
+| `TimeModule` | `punch()`, `getEspelho()` | não implementado — ver nota abaixo |
 
 ## Checkin Module
 
@@ -55,83 +58,79 @@ import { CheckinModule } from '@velix/sdk'
 const checkin = new CheckinModule(client)
 
 // Facial identification (base64 JPEG frame)
-const result = await checkin.facial('tenant-slug', frameBase64)
-// { passed: true, personId: 'uuid', personName: 'João Silva' }
+const result = await checkin.identify({ imageBase64: frameBase64 })
+// { matched: true, personId: 'uuid', qualityScore: 0.91, message: '...' }
 
-// QR code checkin
-const result = await checkin.qr('tenant-slug', qrToken)
-
-// PIN checkin
-const result = await checkin.pin('tenant-slug', pin)
-
-// Paginated history
-const history = await checkin.getHistory('tenant-slug', { page: 1, limit: 20 })
-// { items: [...], total: 142, page: 1, pages: 8 }
+// With liveness challenge (token from GET /v1/public/checkin/{tenantSlug}/liveness/challenge)
+const result2 = await checkin.identify({
+  imageBase64: frameBase64,
+  liveness: { token: challengeToken, samples: [{ action: 'center', imageBase64: frameBase64 }] },
+})
 ```
 
-## Persons Module
+## Onboarding Module
 
 ```typescript
-import { PersonsModule } from '@velix/sdk'
-const persons = new PersonsModule(client)
+import { OnboardingModule } from '@velix/sdk'
+const onboarding = new OnboardingModule(client)
 
-// List with optional search
-const list = await persons.list({ page: 1, limit: 20, search: 'João' })
-
-// Get by ID
-const person = await persons.get('uuid')
-
-// Create
-const created = await persons.create({
+const result = await onboarding.enroll({
   name: 'João Silva',
   email: 'joao@company.com',
-  externalId: 'EMP-001',
+  documentType: 'CPF',
+  document: '12345678900',
+  frames: [frame1, frame2, frame3],
 })
-
-// Update
-await persons.update('uuid', { name: 'João B. Silva' })
-
-// Enroll biometrics (minimum 3 base64 frames)
-await persons.enroll('uuid', [frame1, frame2, frame3])
-
-// Delete
-await persons.delete('uuid')
+// { personId: 'uuid', identityId: 'uuid', enrolled: true, framesProcessed: 3, ... }
 ```
 
-## Events Module
+## Me Module
+
+```typescript
+import { MeModule } from '@velix/sdk'
+const me = new MeModule(client)
+
+const person = await me.get('person-uuid')
+```
+
+## LGPD Module
+
+```typescript
+import { LgpdModule } from '@velix/sdk'
+const lgpd = new LgpdModule(client)
+
+const { protocolNumber } = await lgpd.requestDeletion({ personId: 'uuid' })
+```
+
+## Events Module (Velix Events — convidados)
 
 ```typescript
 import { EventsModule } from '@velix/sdk'
 const events = new EventsModule(client)
 
-const list    = await events.list({ page: 1, limit: 20 })
-const event   = await events.get('uuid')
-const created = await events.create({ name: 'Annual Conference 2026', date: '2026-09-01' })
-await events.configure('uuid', { checkInOpen: true, requireLiveness: true })
+const guest = await events.createGuest('event-uuid', {
+  name: 'João Silva',
+  email: 'joao@company.com',
+  cpf: '12345678900',
+})
+const fetched = await events.getGuest('event-uuid', guest.id)
 ```
 
-## Tenants Module
+## Time Module
 
-```typescript
-import { TenantsModule } from '@velix/sdk'
-const tenants = new TenantsModule(client)
-
-const tenant = await tenants.me()
-await tenants.updateSettings({ requireLiveness: true, biometricQualityLevel: 'high' })
-```
+`api-velix-time` ainda não tem proxy público via `api-velix-identity-core` (gap de servidor, task #593). `TimeModule.punch()` e `TimeModule.getEspelho()` existem apenas para deixar isso explícito — **sempre lançam `VelixError`**, nunca simulam sucesso ou retornam dados falsos.
 
 ## Error Handling
 
 ```typescript
-import { AuthError, BiometricError, RateLimitError, VelixError } from '@velix/sdk'
+import { VelixError, VelixApiError, VelixNetworkError } from '@velix/sdk'
 
 try {
-  const result = await checkin.facial('slug', frame)
+  const result = await checkin.identify({ imageBase64: frame })
 } catch (err) {
-  if (err instanceof AuthError)      console.error('Invalid API key')
-  if (err instanceof BiometricError) console.error('Face not recognized or liveness failed')
-  if (err instanceof RateLimitError) console.error('Rate limit — retry after', err.retryAfter, 'ms')
-  if (err instanceof VelixError)     console.error(`HTTP ${err.statusCode}: ${err.message}`)
+  if (err instanceof VelixApiError)     console.error(`HTTP ${err.status}: ${err.message}`)
+  if (err instanceof VelixNetworkError) console.error('Network error:', err.cause)
+  if (err instanceof VelixError)        console.error(err.message)
 }
 ```
 
