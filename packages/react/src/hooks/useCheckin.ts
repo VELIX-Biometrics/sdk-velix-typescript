@@ -13,10 +13,10 @@ export function useCheckin(client: VelixClient, eventId: string) {
   const checkin = new CheckinModule(client)
 
   const facial = useCallback(
-    async (frame: string, options?: { lat?: number; lng?: number }) => {
+    async (frames: string[], options?: { lat?: number; lng?: number }) => {
       setState({ result: null, loading: true, error: null })
       try {
-        const result = await checkin.facial(eventId, frame, options)
+        const result = await checkin.facial(eventId, frames, options)
         setState({ result, loading: false, error: null })
         return result
       } catch (err) {
