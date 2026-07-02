@@ -1,21 +1,23 @@
 import { useState, useEffect } from 'react'
-import { VelixClient } from '@velix/sdk-browser'
-import type { Person } from '@velix/sdk-browser'
+import { VelixClient, EventsModule } from '@velix/sdk-browser'
+import type { GuestResponse } from '@velix/sdk-browser'
 
-export function useGuest(client: VelixClient, personId: string | null) {
-  const [guest, setGuest] = useState<Person | null>(null)
+/** Hook para GET /v1/api/events/:eventId/guests/:guestId (scope events:read). */
+export function useGuest(client: VelixClient, eventId: string | null, guestId: string | null) {
+  const [guest, setGuest] = useState<GuestResponse | null>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    if (!personId) return
+    if (!eventId || !guestId) return
+    const events = new EventsModule(client)
     setLoading(true)
-    client
-      .get<Person>(`/v1/persons/${personId}`)
+    events
+      .getGuest(eventId, guestId)
       .then(setGuest)
       .catch((err: Error) => setError(err.message))
       .finally(() => setLoading(false))
-  }, [client, personId])
+  }, [client, eventId, guestId])
 
   return { guest, loading, error }
 }

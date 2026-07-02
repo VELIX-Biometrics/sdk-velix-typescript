@@ -8,7 +8,7 @@ export class VelixClient {
 
   constructor(private readonly config: VelixConfig) {
     this.baseUrl = config.apiUrl.replace(/\/$/, '')
-    this.timeout = config.timeout ?? 10000
+    this.timeout = config.timeout ?? 30000
     this.headers = {
       'x-api-key': config.apiKey,
       'Content-Type': 'application/json',

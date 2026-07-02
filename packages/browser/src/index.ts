@@ -1,3 +1,37 @@
 // Re-exporta core sem dependências Node
-export { VelixClient, VelixError, VelixApiError, VelixNetworkError, CheckinModule, PersonsModule } from '@velix/sdk-core'
-export type { VelixConfig, Envelope, ApiResponse, CheckinResult, Person, PaginatedResult } from '@velix/sdk-core'
+export {
+  VelixClient,
+  VelixError,
+  VelixApiError,
+  VelixNetworkError,
+  OnboardingModule,
+  CheckinModule,
+  LgpdModule,
+  MeModule,
+  EventsModule,
+  TimeModule,
+} from '@velix/sdk-core'
+export type {
+  VelixConfig,
+  Envelope,
+  ApiResponse,
+  DocumentType,
+  IdentityRole,
+  OnboardingRequest,
+  OnboardingFrameResult,
+  OnboardingResponse,
+  LivenessAction,
+  LivenessSample,
+  LivenessBlock,
+  CheckinLocation,
+  CheckinIdentifyRequest,
+  CheckinIdentifyResponse,
+  CheckinResult,
+  DeletionRequest,
+  DeletionRequestResponse,
+  MeResponse,
+  Person,
+  CreateGuestRequest,
+  GuestResponse,
+  PaginatedResult,
+} from '@velix/sdk-core'

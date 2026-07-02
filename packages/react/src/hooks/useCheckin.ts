@@ -1,22 +1,23 @@
 import { useState, useCallback } from 'react'
 import { VelixClient, CheckinModule } from '@velix/sdk-browser'
-import type { CheckinResult } from '@velix/sdk-browser'
+import type { CheckinIdentifyRequest, CheckinIdentifyResponse } from '@velix/sdk-browser'
 
 interface UseCheckinState {
-  result: CheckinResult | null
+  result: CheckinIdentifyResponse | null
   loading: boolean
   error: string | null
 }
 
-export function useCheckin(client: VelixClient, eventId: string) {
+/** Hook para POST /v1/api/checkin/identify (scope checkin:write). */
+export function useCheckin(client: VelixClient) {
   const [state, setState] = useState<UseCheckinState>({ result: null, loading: false, error: null })
   const checkin = new CheckinModule(client)
 
-  const facial = useCallback(
-    async (frames: string[], options?: { lat?: number; lng?: number }) => {
+  const identify = useCallback(
+    async (request: CheckinIdentifyRequest) => {
       setState({ result: null, loading: true, error: null })
       try {
-        const result = await checkin.facial(eventId, frames, options)
+        const result = await checkin.identify(request)
         setState({ result, loading: false, error: null })
         return result
       } catch (err) {
@@ -25,8 +26,8 @@ export function useCheckin(client: VelixClient, eventId: string) {
         throw err
       }
     },
-    [client, eventId],
+    [client],
   )
 
-  return { ...state, facial }
+  return { ...state, identify }
 }
