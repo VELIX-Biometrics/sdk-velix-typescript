@@ -10,7 +10,7 @@ export class VelixClient {
     this.baseUrl = config.apiUrl.replace(/\/$/, '')
     this.timeout = config.timeout ?? 10000
     this.headers = {
-      Authorization: `Bearer ${config.apiKey}`,
+      'x-api-key': config.apiKey,
       'Content-Type': 'application/json',
     }
 
@@ -27,7 +27,15 @@ export class VelixClient {
     const url = new URL(`${this.baseUrl}${path}`)
     if (params) {
       for (const [k, v] of Object.entries(params)) {
-        if (v !== undefined && v !== null) url.searchParams.set(k, String(v))
+        if (v === undefined || v === null) continue
+        if (Array.isArray(v)) {
+          // arrays viram múltiplos pares `key=v1&key=v2` (padrão qs/express)
+          for (const item of v) url.searchParams.append(k, String(item))
+        } else if (typeof v === 'object') {
+          url.searchParams.set(k, JSON.stringify(v))
+        } else {
+          url.searchParams.set(k, String(v))
+        }
       }
     }
     return this._fetch<T>(url.toString(), { method: 'GET' })

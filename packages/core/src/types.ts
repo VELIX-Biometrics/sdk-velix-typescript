@@ -12,10 +12,9 @@ export interface Envelope<T> {
 export type ApiResponse<T> = Promise<T>
 
 export interface CheckinResult {
-  success: boolean
-  personId: string
-  eventId: string
-  method: 'facial' | 'qr_code' | 'manual'
+  passed: boolean
+  personId?: string
+  tenantSlug: string
   timestamp: string
   geofenceStatus?: 'ok' | 'alerta' | 'bloqueado'
 }
@@ -29,8 +28,6 @@ export interface Person {
 }
 
 export interface PaginatedResult<T> {
-  data: T[]
+  items: T[]
   total: number
-  page: number
-  pageSize: number
 }
