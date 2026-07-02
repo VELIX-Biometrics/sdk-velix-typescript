@@ -1,6 +1,6 @@
 {
   "name": "@velix/sdk-core",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.1",
   "description": "Velix SDK — tipos, erros, cliente HTTP (zero dependências externas)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

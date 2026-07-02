@@ -1,6 +1,6 @@
 {
   "name": "@velix/sdk-react",
-  "version": "0.1.0",
+  "version": "0.1.0-alpha.1",
   "description": "Velix SDK — React hooks (useCheckin, useGuest, useEventStatus)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",

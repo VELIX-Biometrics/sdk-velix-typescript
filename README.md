@@ -1,269 +1,163 @@
-# velix-sdk-typescript
+# @velix/sdk — TypeScript/JavaScript SDK ![version](https://img.shields.io/badge/version-0.1.0--alpha.1-orange)
 
-SDK TypeScript/JavaScript oficial do VELIX para integração com a plataforma de biometria e controle de acesso.
+> ⚠️ **Alpha / pre-release.** This SDK targets a public API surface that does not yet fully exist on the VELIX backend (see internal task #593). Endpoints and auth may not work against production. Do not use in production integrations yet.
 
----
+Official TypeScript/JavaScript SDK for the VELIX Biometrics platform — facial access control B2B SaaS.
 
-## Sobre o VELIX
+## Requirements
 
-VELIX Biometrics é uma plataforma de identidade digital e biometria que utiliza reconhecimento facial para autenticação, controle de acesso, controle de ponto, credenciamento, check-in e gestão de presença. Desenvolvida para empresas, eventos, indústrias, instituições de ensino e condomínios, a solução oferece identificação rápida, segura e escalável, operando em ambientes cloud, edge ou híbridos. Com arquitetura orientada a APIs, integrações simplificadas e recursos de analytics, o VELIX reduz fraudes, elimina processos manuais, melhora a experiência dos usuários e fornece inteligência operacional em tempo real, mantendo conformidade com a LGPD e padrões corporativos de segurança.
+- Node.js 20+
+- TypeScript 5+ (strict mode)
 
----
-
-## O que este serviço faz
-
-O `@velix/sdk` é o SDK oficial TypeScript/JavaScript do VELIX. Ele encapsula a comunicação HTTP com o `api-velix-identity-core` (BFF único da plataforma) em módulos tipados e prontos para uso, eliminando a necessidade de construir manualmente chamadas REST em integrações externas.
-
-**Responsabilidades:**
-
-- Fornecer um cliente HTTP configurável (`VelixClient`) baseado em axios, com autenticação via API Key e timeout configurável.
-- Expor o `CheckinModule` para check-in facial (frame base64 + geolocalização opcional), check-in por QR Code, check-in manual por operador e consulta de histórico de check-ins de um evento.
-- Expor o `PersonsModule` para listagem paginada de persons de um tenant, consulta individual, enroll biométrico (envio de frame para cadastro facial) e exclusão de person.
-- Exportar todos os tipos TypeScript necessários (`CheckinResult`, `Person`, `PaginatedResult`, `VelixClientConfig`) para uso com tipagem estática completa em projetos consumidores.
-- Ser publicado no registro npm como `@velix/sdk` e consumido por integradores, parceiros e sistemas internos que precisam interagir com a API pública do VELIX de forma padronizada.
-
----
-
-## Stack
-
-| Tecnologia | Versão | Propósito |
-|---|---|---|
-| TypeScript | ^5.4.0 | Linguagem principal, strict mode habilitado |
-| Node.js | ^20 (types) | Runtime de execução |
-| axios | ^1.6.0 | Cliente HTTP para chamadas à API VELIX |
-| Jest | ^29.0.0 | Framework de testes unitários |
-| ts-jest | ^29.0.0 | Transformador TypeScript para Jest |
-| tsc | (embutido no TS) | Compilador — gera `dist/` com declarações `.d.ts` |
-
----
-
-## Arquitetura
-
-O SDK é uma biblioteca cliente pura. Não possui servidor, banco de dados, mensageria nem estado persistente. Toda a lógica de negócio reside no `api-velix-identity-core`.
-
-```
-Integrador / sistema parceiro
-        │
-        │  npm install @velix/sdk
-        ▼
-   VelixClient
-   (axios, Bearer token via API Key)
-        │
-        │  HTTPS
-        ▼
-api-velix-identity-core  ←── BFF único da plataforma VELIX
-   (porta 8001 / 3001)
-        │
-  ┌─────┼──────────────────┐
-  ▼     ▼                  ▼
-edge  vision          intelligence
-```
-
-**Módulos e endpoints consumidos:**
-
-| Módulo SDK | Método | Endpoint |
-|---|---|---|
-| `CheckinModule.facial()` | POST | `/v1/events/:eventId/checkin` |
-| `CheckinModule.qrCode()` | POST | `/v1/events/:eventId/checkin` |
-| `CheckinModule.manual()` | POST | `/v1/events/:eventId/checkin` |
-| `CheckinModule.getHistory()` | GET | `/v1/events/:eventId/checkins` |
-| `PersonsModule.list()` | GET | `/v1/persons` |
-| `PersonsModule.get()` | GET | `/v1/persons/:personId` |
-| `PersonsModule.enroll()` | POST | `/v1/persons/:personId/enroll` |
-| `PersonsModule.delete()` | DELETE | `/v1/persons/:personId` |
-
-**Quem usa este SDK:**
-
-- Integradores externos e parceiros que precisam realizar check-ins ou gerenciar persons via API VELIX.
-- Sistemas internos de automação que consomem a API pública.
-- Projetos que utilizam o `@velix/sdk` como dependência npm direta.
-
----
-
-## Pré-requisitos
-
-- **Node.js 18+** instalado localmente (para build e testes).
-- **`api-velix-identity-core` em execução** (porta 8001 em dev) — o SDK consome exclusivamente esta API.
-- **API Key válida** de um tenant ativo no `api-velix-identity-core` para autenticar as requisições.
-- Acesso à internet ou ao registry npm privado para instalar o pacote (quando publicado).
-
-Para rodar o stack localmente, consulte o `RUNBOOK_SUBIDA.md` na raiz do monorepo ou execute:
-
-```bash
-./velix.sh infra
-./velix.sh api
-```
-
----
-
-## Variáveis de Ambiente
-
-O SDK em si não lê variáveis de ambiente — sua configuração é feita diretamente no construtor do `VelixClient`. Os valores abaixo são os que devem ser obtidos do ambiente e passados ao instanciar o cliente:
-
-| Variável (sugestão) | Obrigatória | Padrão | Descrição |
-|---|---|---|---|
-| `VELIX_API_URL` | Sim | — | URL base do `api-velix-identity-core` (ex: `https://api.velixbiometrics.com` em prod ou `http://localhost:8001` em dev) |
-| `VELIX_API_KEY` | Sim | — | API Key do tenant, obtida no painel administrativo do VELIX |
-| `VELIX_TIMEOUT` | Não | `10000` | Timeout em milissegundos para cada requisição HTTP |
-
-Exemplo de uso com variáveis de ambiente no projeto consumidor:
-
-```bash
-VELIX_API_URL=http://localhost:8001
-VELIX_API_KEY=sua_api_key_aqui
-VELIX_TIMEOUT=10000
-```
-
----
-
-## Como executar localmente
-
-### Instalação como dependência
+## Installation
 
 ```bash
 npm install @velix/sdk
+# or
+yarn add @velix/sdk
 ```
 
-### Desenvolvimento local do SDK
-
-1. **Clone o repositório e acesse o diretório do SDK:**
-
-```bash
-cd SDK/velix-sdk-typescript
-```
-
-2. **Instale as dependências:**
-
-```bash
-npm install
-```
-
-3. **Compile o TypeScript:**
-
-```bash
-npm run build
-```
-
-O output compilado ficará em `dist/` com os arquivos `.js` e as declarações `.d.ts`.
-
-4. **Use o SDK em um projeto local via `npm link`:**
-
-```bash
-# No diretório do SDK
-npm link
-
-# No projeto consumidor
-npm link @velix/sdk
-```
-
-5. **Exemplo de uso básico:**
+## Quick Start
 
 ```typescript
 import { VelixClient, CheckinModule, PersonsModule } from '@velix/sdk'
 
 const client = new VelixClient({
-  apiUrl: process.env.VELIX_API_URL ?? 'http://localhost:8001',
-  apiKey: process.env.VELIX_API_KEY ?? '',
-  timeout: 10000,
+  apiUrl: process.env.VELIX_API_URL!,
+  apiKey: process.env.VELIX_API_KEY!,
 })
 
-// Check-in facial
+const result = await new CheckinModule(client).facial('tenant-slug', frameBase64)
+console.log(result.passed) // true | false
+```
+
+## Environment Variables
+
+| Variable | Required | Description |
+|----------|----------|-------------|
+| `VELIX_API_URL` | Yes | API base URL (`https://api.velixbiometrics.com`) |
+| `VELIX_API_KEY` | Yes | Tenant API key (`vx_live_...` or `vx_sandbox_...`) |
+| `VELIX_TIMEOUT` | No | Request timeout in ms (default: `10000`) |
+
+## Modules
+
+| Module | Methods |
+|--------|---------|
+| `CheckinModule` | `facial()`, `qr()`, `pin()`, `getHistory()` |
+| `PersonsModule` | `list()`, `get()`, `create()`, `update()`, `delete()`, `enroll()` |
+| `EventsModule` | `list()`, `get()`, `create()`, `configure()` |
+| `TenantsModule` | `me()`, `updateSettings()` |
+
+## Checkin Module
+
+```typescript
+import { CheckinModule } from '@velix/sdk'
 const checkin = new CheckinModule(client)
-const result = await checkin.facial('event-id', frameBase64, {
-  lat: -23.5505,
-  lng: -46.6333,
-})
-console.log(result.success, result.personId)
 
-// Check-in por QR Code
-const qrResult = await checkin.qrCode('event-id', 'QR_TOKEN_ABC123')
+// Facial identification (base64 JPEG frame)
+const result = await checkin.facial('tenant-slug', frameBase64)
+// { passed: true, personId: 'uuid', personName: 'João Silva' }
 
-// Check-in manual por operador
-const manualResult = await checkin.manual('event-id', 'person-id', 'operator-id')
+// QR code checkin
+const result = await checkin.qr('tenant-slug', qrToken)
 
-// Histórico de check-ins
-const history = await checkin.getHistory('event-id', 1, 50)
+// PIN checkin
+const result = await checkin.pin('tenant-slug', pin)
 
-// Listagem de persons
+// Paginated history
+const history = await checkin.getHistory('tenant-slug', { page: 1, limit: 20 })
+// { items: [...], total: 142, page: 1, pages: 8 }
+```
+
+## Persons Module
+
+```typescript
+import { PersonsModule } from '@velix/sdk'
 const persons = new PersonsModule(client)
-const lista = await persons.list('tenant-id', 1, 50)
 
-// Buscar person por ID
-const person = await persons.get('person-id')
+// List with optional search
+const list = await persons.list({ page: 1, limit: 20, search: 'João' })
 
-// Enroll biométrico
-const enroll = await persons.enroll('person-id', frameBase64)
-console.log(enroll.enrolled, enroll.quality)
+// Get by ID
+const person = await persons.get('uuid')
 
-// Excluir person
-await persons.delete('person-id')
+// Create
+const created = await persons.create({
+  name: 'João Silva',
+  email: 'joao@company.com',
+  externalId: 'EMP-001',
+})
+
+// Update
+await persons.update('uuid', { name: 'João B. Silva' })
+
+// Enroll biometrics (minimum 3 base64 frames)
+await persons.enroll('uuid', [frame1, frame2, frame3])
+
+// Delete
+await persons.delete('uuid')
 ```
 
----
+## Events Module
 
-## Testes
+```typescript
+import { EventsModule } from '@velix/sdk'
+const events = new EventsModule(client)
 
-Os testes utilizam Jest com mocks de axios — nenhuma instância do `api-velix-identity-core` é necessária para rodar os testes.
+const list    = await events.list({ page: 1, limit: 20 })
+const event   = await events.get('uuid')
+const created = await events.create({ name: 'Annual Conference 2026', date: '2026-09-01' })
+await events.configure('uuid', { checkInOpen: true, requireLiveness: true })
+```
+
+## Tenants Module
+
+```typescript
+import { TenantsModule } from '@velix/sdk'
+const tenants = new TenantsModule(client)
+
+const tenant = await tenants.me()
+await tenants.updateSettings({ requireLiveness: true, biometricQualityLevel: 'high' })
+```
+
+## Error Handling
+
+```typescript
+import { AuthError, BiometricError, RateLimitError, VelixError } from '@velix/sdk'
+
+try {
+  const result = await checkin.facial('slug', frame)
+} catch (err) {
+  if (err instanceof AuthError)      console.error('Invalid API key')
+  if (err instanceof BiometricError) console.error('Face not recognized or liveness failed')
+  if (err instanceof RateLimitError) console.error('Rate limit — retry after', err.retryAfter, 'ms')
+  if (err instanceof VelixError)     console.error(`HTTP ${err.statusCode}: ${err.message}`)
+}
+```
+
+## Running Tests
 
 ```bash
-# Rodar todos os testes
-npm test
-
-# Rodar com cobertura
-npm test -- --coverage
-
-# Rodar em modo watch (desenvolvimento)
-npm test -- --watch
+npm test                   # all tests
+npm test -- --coverage     # with coverage
+npm test -- --watch        # watch mode
 ```
 
-Os testes estão em `src/__tests__/`. Atualmente cobrem o `CheckinModule` (facial, QR Code, manual e passagem de coordenadas GPS).
+Tests use axios mocks — no running service required.
 
----
-
-## Build
+## Local Development
 
 ```bash
-# Compilar TypeScript para dist/
-npm run build
+npm install
+npm run build    # compile to dist/
+npm run lint     # eslint
+
+# Link locally in another project
+npm link
+# In the consumer project:
+npm link @velix/sdk
 ```
 
-O script `prepublishOnly` garante que build e testes passem antes de qualquer publicação:
+## Get an API Key
 
-```bash
-# Executado automaticamente antes de npm publish
-npm run build && npm test
-```
-
-### Publicação no npm
-
-```bash
-# Incrementa versão patch e publica no npm (acesso público)
-npm run release
-```
-
-O comando `release` executa `npm version patch` (incrementa a versão em `package.json`) seguido de `npm publish --access public`. Certifique-se de estar autenticado no registry npm antes de executar:
-
-```bash
-npm login
-```
-
----
-
-## Dependências Externas
-
-| Serviço | Tipo | Descrição |
-|---|---|---|
-| `api-velix-identity-core` | HTTP (API pública) | BFF único da plataforma VELIX. Todos os módulos do SDK consomem exclusivamente esta API na rota `/v1/*`. Autenticação via `Authorization: Bearer <apiKey>`. |
-
----
-
-## Qualidade de código
-
-### Lint e pre-push
-
-Este repositório usa **Husky** para garantir qualidade antes de qualquer push:
-
-```bash
-# Roda automaticamente no pre-push via Husky
-npm run lint
-```
+Access the dashboard at **velixbiometrics.com** → Settings → API Keys → New Key.
