@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react'
-import { VelixClient, CheckinModule } from '@velix/sdk-browser'
-import type { CheckinIdentifyRequest, CheckinIdentifyResponse } from '@velix/sdk-browser'
+import { VelixClient, CheckinModule } from '@velixbiometrics/sdk-browser'
+import type { CheckinIdentifyRequest, CheckinIdentifyResponse } from '@velixbiometrics/sdk-browser'
 
 interface UseCheckinState {
   result: CheckinIdentifyResponse | null

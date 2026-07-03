@@ -18,7 +18,7 @@ npm init -y -q >/dev/null
 npm install --no-audit --no-fund -q /tmp/velix-sdk-core.tgz
 
 node -e "
-const { VelixClient } = require('@velix/sdk-core');
+const { VelixClient } = require('@velixbiometrics/sdk-core');
 const client = new VelixClient({ apiUrl: 'http://localhost', apiKey: 'test' });
 if (typeof client.onboarding?.enroll !== 'function') throw new Error('client.onboarding.enroll não existe no pacote instalado');
 console.log('INSTALL_TEST:typescript:PASS: pacote instalado via npm pack, client.onboarding.enroll existe');

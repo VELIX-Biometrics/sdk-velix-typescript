@@ -10,7 +10,7 @@ export {
   MeModule,
   EventsModule,
   TimeModule,
-} from '@velix/sdk-core'
+} from '@velixbiometrics/sdk-core'
 export type {
   VelixConfig,
   Envelope,
@@ -34,4 +34,4 @@ export type {
   CreateGuestRequest,
   GuestResponse,
   PaginatedResult,
-} from '@velix/sdk-core'
+} from '@velixbiometrics/sdk-core'

@@ -6,7 +6,7 @@ Cada release publica attestations de provenance via Sigstore. Para verificar:
 
 ```bash
 # Verificar provenance npm (requer npm >=9.5)
-npm audit signatures @velix/sdk-core
+npm audit signatures @velixbiometrics/sdk-core
 
 # Verificar com cosign
 cosign verify-blob dist/velix-sdk-core-*.tgz \

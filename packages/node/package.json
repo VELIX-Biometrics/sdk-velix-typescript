@@ -1,5 +1,5 @@
 {
-  "name": "@velix/sdk-node",
+  "name": "@velixbiometrics/sdk-node",
   "version": "0.1.0-alpha.1",
   "description": "Velix SDK \u2014 extens\u00f5es server-side (webhooks HMAC, retry, streaming)",
   "main": "dist/index.js",
@@ -14,7 +14,7 @@
     "postinstall": ""
   },
   "dependencies": {
-    "@velix/sdk-core": "workspace:*"
+    "@velixbiometrics/sdk-core": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.4.0",

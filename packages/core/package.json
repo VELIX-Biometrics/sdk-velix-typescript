@@ -1,5 +1,5 @@
 {
-  "name": "@velix/sdk-core",
+  "name": "@velixbiometrics/sdk-core",
   "version": "0.1.0",
   "description": "Official TypeScript/JavaScript SDK for VELIX Biometrics — facial access control platform",
   "main": "dist/index.js",

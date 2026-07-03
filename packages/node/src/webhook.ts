@@ -1,5 +1,5 @@
 import { createHmac, timingSafeEqual } from 'crypto'
-import { VelixError } from '@velix/sdk-core'
+import { VelixError } from '@velixbiometrics/sdk-core'
 
 export interface WebhookPayload {
   event: string

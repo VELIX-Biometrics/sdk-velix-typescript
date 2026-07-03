@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
-import { VelixClient, EventsModule } from '@velix/sdk-browser'
-import type { GuestResponse } from '@velix/sdk-browser'
+import { VelixClient, EventsModule } from '@velixbiometrics/sdk-browser'
+import type { GuestResponse } from '@velixbiometrics/sdk-browser'
 
 /** Hook para GET /v1/api/events/:eventId/guests/:guestId (scope events:read). */
 export function useGuest(client: VelixClient, eventId: string | null, guestId: string | null) {

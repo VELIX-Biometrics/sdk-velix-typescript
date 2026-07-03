@@ -1,5 +1,5 @@
 {
-  "name": "@velix/sdk-react",
+  "name": "@velixbiometrics/sdk-react",
   "version": "0.1.0-alpha.1",
   "description": "Velix SDK \u2014 React hooks (useCheckin, useGuest, useEventStatus)",
   "main": "dist/index.js",
@@ -14,7 +14,7 @@
     "postinstall": ""
   },
   "dependencies": {
-    "@velix/sdk-browser": "workspace:*"
+    "@velixbiometrics/sdk-browser": "workspace:*"
   },
   "peerDependencies": {
     "react": "^18.0.0 || ^19.0.0"

@@ -1,5 +1,5 @@
 {
-  "name": "@velix/sdk-browser",
+  "name": "@velixbiometrics/sdk-browser",
   "version": "0.1.0-alpha.1",
   "description": "Velix SDK \u2014 extens\u00f5es browser (sem Node built-ins)",
   "main": "dist/index.js",
@@ -14,7 +14,7 @@
     "postinstall": ""
   },
   "dependencies": {
-    "@velix/sdk-core": "workspace:*"
+    "@velixbiometrics/sdk-core": "workspace:*"
   },
   "devDependencies": {
     "typescript": "^5.4.0",
