@@ -1,11 +1,16 @@
 {
   "name": "@velix/sdk-core",
   "version": "0.1.0",
-  "description": "Velix SDK — tipos, erros, cliente HTTP (zero dependências externas)",
+  "description": "Official TypeScript/JavaScript SDK for VELIX Biometrics — facial access control platform",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "files": ["dist"],
-  "license": "UNLICENSED",
+  "license": "MIT",
+  "author": "VELIX Biometrics <sdk@velixbiometrics.com>",
+  "homepage": "https://velixbiometrics.com",
+  "repository": { "type": "git", "url": "https://github.com/VELIX-Biometrics/sdk-velix-typescript" },
+  "keywords": ["velix", "biometrics", "facial-recognition", "access-control"],
+  "publishConfig": { "access": "public" },
   "scripts": {
     "build": "tsc",
     "test": "vitest run --passWithNoTests",

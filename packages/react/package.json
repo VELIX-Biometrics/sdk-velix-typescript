@@ -1,11 +1,13 @@
 {
   "name": "@velix/sdk-react",
   "version": "0.1.0-alpha.1",
-  "description": "Velix SDK — React hooks (useCheckin, useGuest, useEventStatus)",
+  "description": "Velix SDK \u2014 React hooks (useCheckin, useGuest, useEventStatus)",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
-  "files": ["dist"],
-  "license": "UNLICENSED",
+  "files": [
+    "dist"
+  ],
+  "license": "MIT",
   "scripts": {
     "build": "tsc",
     "test": "vitest run --passWithNoTests",
@@ -22,5 +24,14 @@
     "react": "^19.0.0",
     "typescript": "^5.4.0",
     "vitest": "^2.0.0"
+  },
+  "author": "VELIX Biometrics <sdk@velixbiometrics.com>",
+  "homepage": "https://velixbiometrics.com",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/VELIX-Biometrics/sdk-velix-typescript"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
