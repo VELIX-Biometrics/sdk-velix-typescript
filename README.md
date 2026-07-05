@@ -25,7 +25,6 @@ import { VelixClient, CheckinModule } from '@velixbiometrics/sdk-core'
 const client = new VelixClient({
   apiUrl: process.env.VELIX_API_URL!,
   apiKey: process.env.VELIX_API_KEY!,
-  environment: 'sandbox',
 })
 
 const result = await new CheckinModule(client).identify({ imageBase64: frameBase64 })
@@ -37,7 +36,7 @@ console.log(result.matched) // true | false
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `VELIX_API_URL` | Yes | API base URL (`https://api.velixbiometrics.com`) |
-| `VELIX_API_KEY` | Yes | Tenant API key (`vx_live_...` or `vx_sandbox_...`) |
+| `VELIX_API_KEY` | Yes | Tenant API key (`vx_live_...`) |
 | `VELIX_TIMEOUT` | No | Request timeout in ms (default: `30000`) |
 
 ## Modules

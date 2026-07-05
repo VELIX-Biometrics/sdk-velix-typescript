@@ -1,7 +1,8 @@
 export interface VelixConfig {
   apiUrl: string
   apiKey: string
-  environment: 'production' | 'sandbox'
+  /** @deprecated Não há ambiente sandbox — todo cliente integra contra produção. Ignorado pelo client. */
+  environment?: 'production'
   /** Timeout do cliente HTTP em ms. Default: 30000 (30s). Sempre sobrescrevível. */
   timeout?: number
 }
