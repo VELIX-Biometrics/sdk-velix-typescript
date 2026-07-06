@@ -12,6 +12,7 @@ export class OnboardingModule {
       phone: request.phone,
       document: request.document,
       document_type: request.documentType,
+      birth_date: request.birthDate,
       external_id: request.externalId,
       metadata: request.metadata,
       frames: request.frames,
@@ -32,6 +33,8 @@ export class OnboardingModule {
       }>
       embedding_id: string | null
       message: string
+      age: number | null
+      is_minor: boolean | null
     }>('/v1/api/onboarding', body)
 
     const framesResults: OnboardingFrameResult[] = (res.frames_results ?? []).map((f) => ({
@@ -49,6 +52,8 @@ export class OnboardingModule {
       framesResults,
       embeddingId: res.embedding_id,
       message: res.message,
+      age: res.age,
+      isMinor: res.is_minor,
     }
   }
 }

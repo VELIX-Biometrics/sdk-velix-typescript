@@ -38,14 +38,6 @@ export class VelixClient {
       'Content-Type': 'application/json',
     }
 
-    if (
-      config.environment === 'sandbox' &&
-      config.apiUrl.includes('api.velixbiometrics.com') &&
-      !config.apiUrl.includes('sandbox')
-    ) {
-      console.warn('[Velix SDK] URL de produção usada com environment=sandbox. Verifique a configuração.')
-    }
-
     // Facade — padronizado com os outros 15 SDKs (client.onboarding,
     // client.checkin, etc). Antes exigia instanciar cada módulo manualmente
     // (new OnboardingModule(client)), inconsistente com o resto do catálogo.
