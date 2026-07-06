@@ -21,10 +21,12 @@ export type IdentityRole = 'member' | 'admin' | 'tenant_admin'
 /** Superfície idiomática camelCase exposta ao consumidor do SDK. */
 export interface OnboardingRequest {
   name: string
-  email?: string
-  phone?: string
-  document?: string
-  documentType?: DocumentType
+  email: string
+  phone: string
+  document: string
+  documentType: DocumentType
+  /** ISO 8601 (ex: '1990-05-20'). Opcional, mas necessário para calcular age/isMinor na resposta. */
+  birthDate?: string
   externalId?: string
   metadata?: Record<string, unknown>
   /** Frames JPEG base64, sem prefixo data URI. Mínimo 1. */
@@ -48,6 +50,10 @@ export interface OnboardingResponse {
   framesResults: OnboardingFrameResult[]
   embeddingId: string | null
   message: string
+  /** Calculada a partir de birthDate — null se birthDate não foi informado. */
+  age: number | null
+  /** true se age < 18 — null se birthDate não foi informado. */
+  isMinor: boolean | null
 }
 
 // ── Checkin (POST /v1/api/checkin/identify) ─────────────────────────────
@@ -80,12 +86,17 @@ export interface CheckinIdentifyRequest {
   location?: CheckinLocation
 }
 
+export interface CheckinLiveness {
+  ok: boolean
+}
+
 export interface CheckinIdentifyResponse {
-  matched: boolean
-  personId: string | null
-  /** Score de liveness NUNCA é exposto — apenas passed/matched booleans. */
-  qualityScore: number
-  message: string
+  match: boolean
+  subjectId: string | null
+  subjectName: string | null
+  /** Score de liveness NUNCA é exposto — apenas o booleano `ok`. */
+  liveness: CheckinLiveness
+  model: string
 }
 
 /** @deprecated Use CheckinIdentifyResponse — mantido para compat de import. */

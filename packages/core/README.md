@@ -28,7 +28,7 @@ const client = new VelixClient({
 })
 
 const result = await new CheckinModule(client).identify({ imageBase64: frameBase64 })
-console.log(result.matched) // true | false
+console.log(result.match) // true | false
 ```
 
 ## Environment Variables

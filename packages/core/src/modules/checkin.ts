@@ -6,8 +6,8 @@ export class CheckinModule {
   constructor(private readonly client: VelixClient) {}
 
   /**
-   * Identificação facial via biometria. Score de liveness NUNCA é exposto —
-   * a resposta traz apenas `matched` (boolean).
+   * Identificação facial via biometria. Score de similaridade e de liveness
+   * NUNCA são expostos — a resposta traz apenas os booleanos `match`/`liveness.ok`.
    */
   async identify(request: CheckinIdentifyRequest): Promise<CheckinIdentifyResponse> {
     const body = {
@@ -26,18 +26,6 @@ export class CheckinModule {
       location: request.location,
     }
 
-    const res = await this.client.post<{
-      matched: boolean
-      person_id: string | null
-      quality_score: number
-      message: string
-    }>('/v1/api/checkin/identify', body)
-
-    return {
-      matched: res.matched,
-      personId: res.person_id,
-      qualityScore: res.quality_score,
-      message: res.message,
-    }
+    return this.client.post<CheckinIdentifyResponse>('/v1/api/checkin/identify', body)
   }
 }
