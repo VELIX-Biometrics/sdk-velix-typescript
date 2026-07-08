@@ -6,6 +6,13 @@ import { LgpdModule } from './modules/lgpd'
 import { MeModule } from './modules/me'
 import { EventsModule } from './modules/events'
 import { TimeModule } from './modules/time'
+import {
+  ContextModule,
+  ContextMembershipModule,
+  ContextRoleModule,
+  ContextPermissionModule,
+  AuthorizationTokenModule,
+} from './modules/context'
 
 export class VelixClient {
   private readonly baseUrl: string
@@ -30,6 +37,21 @@ export class VelixClient {
   /** Não implementado — ver modules/time.ts. */
   readonly time: TimeModule
 
+  /** /v1/contexts/* (Identity Context). */
+  readonly contexts: ContextModule
+
+  /** /v1/contexts/{id}/memberships, /v1/identities/{id}/memberships, /v1/memberships/* (Identity Context). */
+  readonly memberships: ContextMembershipModule
+
+  /** /v1/context-roles/* (Identity Context). */
+  readonly contextRoles: ContextRoleModule
+
+  /** /v1/context-permissions (Identity Context). */
+  readonly contextPermissions: ContextPermissionModule
+
+  /** /v1/authorization-tokens/validate (Identity Context). */
+  readonly authorizationTokens: AuthorizationTokenModule
+
   constructor(private readonly config: VelixConfig) {
     this.baseUrl = config.apiUrl.replace(/\/$/, '')
     this.timeout = config.timeout ?? 30000
@@ -47,6 +69,11 @@ export class VelixClient {
     this.me = new MeModule(this)
     this.events = new EventsModule(this)
     this.time = new TimeModule()
+    this.contexts = new ContextModule(this)
+    this.memberships = new ContextMembershipModule(this)
+    this.contextRoles = new ContextRoleModule(this)
+    this.contextPermissions = new ContextPermissionModule(this)
+    this.authorizationTokens = new AuthorizationTokenModule(this)
   }
 
   async get<T>(path: string, params?: Record<string, unknown>): Promise<T> {
@@ -76,6 +103,13 @@ export class VelixClient {
 
   async delete<T = void>(path: string): Promise<T> {
     return this._fetch<T>(`${this.baseUrl}${path}`, { method: 'DELETE' })
+  }
+
+  async patch<T>(path: string, body?: unknown): Promise<T> {
+    return this._fetch<T>(`${this.baseUrl}${path}`, {
+      method: 'PATCH',
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    })
   }
 
   private async _fetch<T>(url: string, init: RequestInit): Promise<T> {
