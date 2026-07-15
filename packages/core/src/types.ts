@@ -77,6 +77,16 @@ export interface CheckinLocation {
   accuracy?: number
 }
 
+/** Resposta de GET /v1/public/checkin/{tenantSlug}/liveness/challenge (endpoint público, sem API Key). */
+export interface LivenessChallenge {
+  /** Nonce anti-replay — usar em LivenessBlock.token dentro de identify(). */
+  token: string
+  /** Sequência de ações que o chamador deve capturar, nesta ordem. */
+  steps: LivenessAction[]
+  /** Timestamp Unix (segundos) de expiração do nonce. */
+  expiresAt: number
+}
+
 export interface CheckinIdentifyRequest {
   /** Frame base64 principal. */
   imageBase64: string
