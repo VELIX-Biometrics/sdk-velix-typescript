@@ -6,6 +6,13 @@ export { LgpdModule } from './modules/lgpd'
 export { MeModule } from './modules/me'
 export { EventsModule } from './modules/events'
 export { TimeModule } from './modules/time'
+export {
+  ContextModule,
+  ContextMembershipModule,
+  ContextRoleModule,
+  ContextPermissionModule,
+  AuthorizationTokenModule,
+} from './modules/context'
 export type {
   VelixConfig,
   Envelope,

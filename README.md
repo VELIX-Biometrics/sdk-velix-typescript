@@ -49,6 +49,11 @@ console.log(result.match) // true | false
 | `MeModule` | `get()` | `GET /v1/api/me/:personId` |
 | `EventsModule` | `createGuest()`, `getGuest()` | `POST`/`GET /v1/api/events/:id/guests` |
 | `TimeModule` | `punch()`, `getEspelho()` | não implementado — ver nota abaixo |
+| `client.contexts` | `create()`, `get()`, `list()`, `update()`, `remove()`, `authorize()`, `listAuthorizationDecisions()`, `createLinkRequest()` | `/v1/contexts/*` |
+| `client.memberships` | `create()`, `listByContext()`, `listByIdentity()`, `updateStatus()`, `addRoles()`, `removeRoles()` | `/v1/contexts/:id/memberships`, `/v1/identities/:id/memberships`, `/v1/memberships/*` |
+| `client.contextRoles` | `create()`, `list()`, `linkPermissions()` | `/v1/context-roles*` |
+| `client.contextPermissions` | `create()`, `list()` | `/v1/context-permissions` |
+| `client.authorizationTokens` | `validate()` | `POST /v1/authorization-tokens/validate` |
 
 ## Checkin Module
 
@@ -118,6 +123,33 @@ const fetched = await events.getGuest('event-uuid', guest.id)
 ## Time Module
 
 `api-velix-time` ainda não tem proxy público via `api-velix-identity-core` (gap de servidor, task #593). `TimeModule.punch()` e `TimeModule.getEspelho()` existem apenas para deixar isso explícito — **sempre lançam `VelixError`**, nunca simulam sucesso ou retornam dados falsos.
+
+## Identity Context
+
+Contexts, roles, permissions, memberships, link-requests (consentimento cross-tenant) e authorization engine. Ver `code/lib/lib-velix-contracts/openapi/public-api.yaml`, tag `Identity Context`.
+
+```typescript
+const context = await client.contexts.create({ name: 'Matriz SP', contextType: 'location' })
+
+const decision = await client.contexts.authorize(context.id, {
+  identityId: 'identity-uuid',
+  permission: 'access:enter',
+})
+// { granted: true, token: 'vat_...', ... }
+
+const membership = await client.memberships.create(context.id, {
+  identityId: 'identity-uuid',
+  roleIds: ['role-uuid'],
+})
+
+// saída de contexto (definitiva, sem carência)
+await client.memberships.updateStatus(membership.id, { status: 'revoked' })
+
+// vínculo cross-tenant — fica PENDING até a pessoa consentir via magic link
+await client.contexts.createLinkRequest(context.id, { identityId: 'identity-uuid' })
+
+await client.authorizationTokens.validate({ token: 'vat_...' })
+```
 
 ## Error Handling
 
