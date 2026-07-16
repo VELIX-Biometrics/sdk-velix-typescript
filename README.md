@@ -1,4 +1,4 @@
-# @velixbiometrics/sdk-core — TypeScript/JavaScript SDK ![version](https://img.shields.io/badge/version-0.1.0--alpha.1-orange)
+# @velixbiometrics/sdk-core — TypeScript/JavaScript SDK ![version](https://img.shields.io/badge/version-0.1.3-orange)
 
 > ⚠️ **Alpha / pre-release**, mas já publicado e confirmado funcionando de ponta a ponta contra a API real de staging (onboarding, LGPD, me, events). **npm:** https://www.npmjs.com/package/@velixbiometrics/sdk-core
 
