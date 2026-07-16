@@ -1,4 +1,4 @@
-# @velixbiometrics/sdk-core — TypeScript/JavaScript SDK ![version](https://img.shields.io/badge/version-0.1.3-orange)
+# @velixbiometrics/sdk-core — TypeScript/JavaScript SDK ![version](https://img.shields.io/badge/version-0.1.7-orange)
 
 > ⚠️ **Alpha / pre-release**, mas já publicado e confirmado funcionando de ponta a ponta contra a API real de staging (onboarding, LGPD, me, events). **npm:** https://www.npmjs.com/package/@velixbiometrics/sdk-core
 
@@ -64,7 +64,15 @@ const checkin = new CheckinModule(client)
 
 // Facial identification (base64 JPEG frame)
 const result = await checkin.identify({ imageBase64: frameBase64 })
-// { matched: true, personId: 'uuid', qualityScore: 0.91, message: '...' }
+// { match: true, subjectId: 'uuid', liveness: { ok: true }, model: '...', contexts: [...] }
+
+// `contexts` lists the active Identity Context memberships of the matched
+// person (e.g. Velix Pay) — no extra call needed to know which programs
+// they're in. Use the context's own authorize endpoint for the actual
+// authorization decision at transaction time.
+if (result.match) {
+  const inVelixPay = result.contexts.some((c) => c.code === 'payment')
+}
 
 // With liveness challenge (token from GET /v1/public/checkin/{tenantSlug}/liveness/challenge)
 const result2 = await checkin.identify({

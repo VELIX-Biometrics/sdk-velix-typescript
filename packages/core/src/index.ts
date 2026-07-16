@@ -27,6 +27,8 @@ export type {
   LivenessSample,
   LivenessBlock,
   CheckinLocation,
+  CheckinLiveness,
+  CheckinContext,
   CheckinIdentifyRequest,
   CheckinIdentifyResponse,
   CheckinResult,
