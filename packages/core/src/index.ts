@@ -13,6 +13,7 @@ export {
   ContextPermissionModule,
   AuthorizationTokenModule,
 } from './modules/context'
+export { InternalAuthorizationModule } from './modules/internal-authorization'
 export type {
   VelixConfig,
   Envelope,
@@ -36,4 +37,8 @@ export type {
   CreateGuestRequest,
   GuestResponse,
   PaginatedResult,
+  InternalAuthorizeRequest,
+  InternalAuthorizeResult,
+  InternalAuthorizeRiskResult,
+  InternalAuthorizeResponse,
 } from './types'

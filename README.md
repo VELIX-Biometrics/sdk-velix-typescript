@@ -54,6 +54,7 @@ console.log(result.match) // true | false
 | `client.contextRoles` | `create()`, `list()`, `linkPermissions()` | `/v1/context-roles*` |
 | `client.contextPermissions` | `create()`, `list()` | `/v1/context-permissions` |
 | `client.authorizationTokens` | `validate()` | `POST /v1/authorization-tokens/validate` |
+| `client.internalAuthorization` | `authorize()` | `POST /v1/internal/contexts/authorize` |
 
 ## Checkin Module
 
@@ -149,6 +150,35 @@ await client.memberships.updateStatus(membership.id, { status: 'revoked' })
 await client.contexts.createLinkRequest(context.id, { identityId: 'identity-uuid' })
 
 await client.authorizationTokens.validate({ token: 'vat_...' })
+```
+
+## Internal Authorization (Velix Pay e integrações serviço-a-serviço)
+
+Autorização automática (sem usuário humano logado) contra um contexto do Identity Context,
+resolvida por `contextCode` + `personId` — diferente de `client.contexts.authorize()`, que exige
+um `contextId` já conhecido e é autenticado por JWT de usuário. Este módulo usa a mesma apikey de
+produto (`x-api-key`) já configurada no client.
+
+```typescript
+// Fluxo genérico
+const decision = await client.internalAuthorization.authorize({
+  tenantId: 'tenant-uuid',
+  contextCode: 'payment',
+  personId: 'person-uuid',
+  action: 'purchase',
+  confidence: 0.92,
+})
+// { authorized: true, reason: '...', contextId: '...', identityId: '...', ... }
+
+// Fluxo de risk score (Velix Pay) — enviar similarityScore muda o formato da resposta
+const risk = await client.internalAuthorization.authorize({
+  tenantId: 'tenant-uuid',
+  contextCode: 'payment',
+  personId: 'person-uuid',
+  action: 'purchase',
+  similarityScore: 0.87,
+})
+// { allowed: true } | { allowed: false, risk: 0.4 }
 ```
 
 ## Error Handling
