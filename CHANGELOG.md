@@ -4,6 +4,18 @@ Formato baseado em [Keep a Changelog](https://keepachangelog.com/pt-BR/1.0.0/). 
 publicado em `packages/core/package.json`; changelog cobre só o pacote `@velixbiometrics/sdk-core`
 (único dos 4 do monorepo `sdk-velix-typescript` publicado no npm até agora).
 
+## [0.1.8] — 2026-07-16
+
+### Fixed
+- **O README publicado no npm nunca era o mesmo que o README do repo:** `packages/core/README.md`
+  é o arquivo que o npm de fato empacota e exibe na página do pacote — mas vinha ficando
+  desatualizado há várias versões (ainda mostrava badge `0.1.0-alpha.1`, aviso de "Alpha /
+  pre-release", e não documentava `client.contexts`/`client.internalAuthorization`/`contexts` do
+  checkin) enquanto só o `README.md` da raiz do monorepo (não publicado, só visível no GitHub)
+  vinha sendo atualizado. Sincronizados os dois arquivos e removido o aviso de alpha — o pacote já
+  está confirmado ponta a ponta contra staging real, ressalvado o gap conhecido de
+  `checkin.identify()` (task #1233).
+
 ## [0.1.7] — 2026-07-16
 
 ### Fixed
