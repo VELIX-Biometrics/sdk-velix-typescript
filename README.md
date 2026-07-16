@@ -1,6 +1,13 @@
-# @velixbiometrics/sdk-core — TypeScript/JavaScript SDK ![version](https://img.shields.io/badge/version-0.1.7-orange)
+# @velixbiometrics/sdk-core — TypeScript/JavaScript SDK ![version](https://img.shields.io/badge/version-0.1.8-blue)
 
-> ⚠️ **Alpha / pre-release**, mas já publicado e confirmado funcionando de ponta a ponta contra a API real de staging (onboarding, LGPD, me, events). **npm:** https://www.npmjs.com/package/@velixbiometrics/sdk-core
+Publicado e confirmado funcionando de ponta a ponta contra a API real de staging (onboarding,
+LGPD, me, events, contexts/Identity Context, internal authorization). **npm:**
+https://www.npmjs.com/package/@velixbiometrics/sdk-core
+
+> ℹ️ Único gap de cobertura conhecido: `checkin.identify()` é exercitado no smoke test (rota
+> alcançável), mas ainda sem um teste que force um resultado de match real (`matched: true`/`false`
+> determinístico contra o mesmo rosto). Ver `docs/todo/1233-sdk-checkin-smoke-test-hardening.md`
+> no monorepo VELIX antes de depender dele em produção sem validação própria.
 
 Official TypeScript/JavaScript SDK for the VELIX Biometrics platform — facial access control B2B SaaS.
 
