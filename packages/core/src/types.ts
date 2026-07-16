@@ -162,3 +162,48 @@ export interface PaginatedResult<T> {
   items: T[]
   total: number
 }
+
+/**
+ * Payload de POST /v1/internal/contexts/authorize — autorização
+ * serviço-a-serviço (sem usuário humano), autenticada por apikey de
+ * produto (x-api-key), usada pelo Velix Pay (Orbix Mart) e demais
+ * integrações que autorizam ações automáticas contra um contexto do
+ * Identity Context. Diferente de ContextModule.authorize(contextId, ...),
+ * que é o Authorization Engine público autenticado por JWT de usuário.
+ */
+export interface InternalAuthorizeRequest {
+  tenantId: string
+  contextCode: string
+  personId: string
+  action: string
+  resource?: string
+  confidence?: number
+  livenessRequired?: boolean
+  livenessStatus?: 'PASSED' | 'FAILED' | 'NOT_PERFORMED'
+  deviceId?: string
+  metadata?: Record<string, unknown>
+  /**
+   * Score de similaridade biométrica (0-1) do identify. Quando presente,
+   * a resposta muda pro formato de risk score do Velix Pay
+   * (InternalAuthorizeRiskResult) em vez do formato genérico
+   * (InternalAuthorizeResult).
+   */
+  similarityScore?: number
+}
+
+export interface InternalAuthorizeResult {
+  authorized: boolean
+  reason: string
+  contextId: string | null
+  identityId: string | null
+  membershipId: string | null
+  action: string
+  resource: string | null
+  decisionId?: string
+}
+
+export type InternalAuthorizeRiskResult =
+  | { allowed: true }
+  | { allowed: false; risk: number }
+
+export type InternalAuthorizeResponse = InternalAuthorizeResult | InternalAuthorizeRiskResult

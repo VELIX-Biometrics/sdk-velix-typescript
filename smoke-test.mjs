@@ -82,3 +82,19 @@ try {
 } catch (e) {
   result('events_get', reachable(e.message), e.message)
 }
+
+// A apikey de teste do harness pode não ser de produto (x-api-key com
+// permissão de authorize) — o objetivo aqui é confirmar que a rota
+// interna existe e o SDK monta o request certo, não simular uma decisão
+// de autorização real.
+try {
+  await client.internalAuthorization.authorize({
+    tenantId: '00000000-0000-0000-0000-000000000000',
+    contextCode: 'payment',
+    personId: '00000000-0000-0000-0000-000000000000',
+    action: 'purchase',
+  })
+  result('internal_authorization', true, 'endpoint reachable')
+} catch (e) {
+  result('internal_authorization', reachable(e.message), e.message)
+}

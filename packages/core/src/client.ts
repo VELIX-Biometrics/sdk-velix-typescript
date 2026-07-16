@@ -13,6 +13,7 @@ import {
   ContextPermissionModule,
   AuthorizationTokenModule,
 } from './modules/context'
+import { InternalAuthorizationModule } from './modules/internal-authorization'
 
 export class VelixClient {
   private readonly baseUrl: string
@@ -52,6 +53,9 @@ export class VelixClient {
   /** /v1/authorization-tokens/validate (Identity Context). */
   readonly authorizationTokens: AuthorizationTokenModule
 
+  /** POST /v1/internal/contexts/authorize (Velix Pay e outras integrações serviço-a-serviço). */
+  readonly internalAuthorization: InternalAuthorizationModule
+
   constructor(private readonly config: VelixConfig) {
     this.baseUrl = config.apiUrl.replace(/\/$/, '')
     this.timeout = config.timeout ?? 30000
@@ -74,6 +78,7 @@ export class VelixClient {
     this.contextRoles = new ContextRoleModule(this)
     this.contextPermissions = new ContextPermissionModule(this)
     this.authorizationTokens = new AuthorizationTokenModule(this)
+    this.internalAuthorization = new InternalAuthorizationModule(this)
   }
 
   async get<T>(path: string, params?: Record<string, unknown>): Promise<T> {
