@@ -100,6 +100,21 @@ export interface CheckinLiveness {
   ok: boolean
 }
 
+/**
+ * Contexto ativo (Identity Context) ao qual a pessoa identificada pertence
+ * neste tenant — ex: `{ type: "COMPANY", code: "payment", name: "Velix Pay" }`.
+ * Lista informativa de "em quais contextos esta pessoa está", pra uso no
+ * PDV/integração sem chamada extra. Não confundir com a validação pontual
+ * de autorização de compra — use o endpoint de authorize do contexto
+ * específico na hora da transação em si.
+ */
+export interface CheckinContext {
+  contextId: string
+  type: string
+  code: string | null
+  name: string
+}
+
 export interface CheckinIdentifyResponse {
   match: boolean
   subjectId: string | null
@@ -107,6 +122,8 @@ export interface CheckinIdentifyResponse {
   /** Score de liveness NUNCA é exposto — apenas o booleano `ok`. */
   liveness: CheckinLiveness
   model: string
+  /** Contextos ativos do identity casado (vazio se match=false). */
+  contexts: CheckinContext[]
 }
 
 /** @deprecated Use CheckinIdentifyResponse — mantido para compat de import. */
