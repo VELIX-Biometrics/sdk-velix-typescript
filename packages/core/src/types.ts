@@ -124,6 +124,15 @@ export interface CheckinIdentifyResponse {
   model: string
   /** Contextos ativos do identity casado (vazio se match=false). */
   contexts: CheckinContext[]
+  /**
+   * Prova HMAC de curta duração (5min) do match biométrico real — presente
+   * só quando `match=true`. Repasse este valor em `identifyProofToken` ao
+   * chamar `InternalAuthorizationModule.authorize()` em vez de calcular/
+   * inventar um `similarityScore` (campo removido, ver #1342). Nunca
+   * reconstrua nem armazene este token além do necessário — TTL curto de
+   * propósito.
+   */
+  identifyProofToken?: string | null
 }
 
 /** @deprecated Use CheckinIdentifyResponse — mantido para compat de import. */
@@ -200,12 +209,17 @@ export interface InternalAuthorizeRequest {
   deviceId?: string
   metadata?: Record<string, unknown>
   /**
-   * Score de similaridade biométrica (0-1) do identify. Quando presente,
-   * a resposta muda pro formato de risk score do Velix Pay
-   * (InternalAuthorizeRiskResult) em vez do formato genérico
-   * (InternalAuthorizeResult).
+   * BREAKING CHANGE (2026-07-16): substitui o antigo `similarityScore` —
+   * o endpoint não aceita mais score cru enviado pelo chamador (achado de
+   * segurança: nada impedia forjar `similarityScore: 1.0` sem
+   * reconhecimento facial real ter acontecido). Agora exige o token
+   * `identifyProofToken` retornado por `CheckinModule.identify()` no
+   * momento do match — prova HMAC de curta duração (5min) vinculada a
+   * `tenantId`+`personId`. Quando presente, a resposta muda pro formato
+   * de risk score do Velix Pay (InternalAuthorizeRiskResult) em vez do
+   * formato genérico (InternalAuthorizeResult).
    */
-  similarityScore?: number
+  identifyProofToken?: string
 }
 
 export interface InternalAuthorizeResult {
